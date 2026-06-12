@@ -35,9 +35,9 @@ static std::unique_ptr<IRepository> selectRepository() {
                   << "  |        저장 방식을 선택하세요                  |\n"
                   << "  +================================================+\n";
         setColor(Color::WHITE);
-        std::cout << "  |  [1] 파일 저장  — CSV  (employees.csv)        |\n"
-                  << "  |  [2] JSON 저장  — JSON (employees.json)       |\n"
-                  << "  |  [3] DB 저장    — SQLite (employees.db)       |\n";
+        std::cout << "  |  [1] JSON 저장소 조회                          |\n"
+                  << "  |  [2] CSV 저장소 조회                           |\n"
+                  << "  |  [3] SQLite 저장소 조회                        |\n";
         setColor(Color::GRAY);
         std::cout << "  |  [0] 종료                                      |\n";
         setColor(Color::CYAN);
@@ -54,8 +54,8 @@ static std::unique_ptr<IRepository> selectRepository() {
         std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
 
         switch (choice) {
-        case 1: return std::make_unique<FileRepository>();
-        case 2: return std::make_unique<JsonRepository>();
+        case 1: return std::make_unique<JsonRepository>();
+        case 2: return std::make_unique<FileRepository>();
         case 3: return std::make_unique<DbRepository>();
         case 0: return nullptr;
         default:
