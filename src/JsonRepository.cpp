@@ -128,8 +128,14 @@ std::vector<Employee> JsonRepository::load() const {
 }
 
 void JsonRepository::save(const std::vector<Employee>& records) const {
-    std::ofstream file(m_path, std::ios::trunc);
-    file << serializeJson(records);
+    const std::string tmp = m_path + ".tmp";
+    {
+        std::ofstream file(tmp, std::ios::trunc);
+        if (!file.is_open()) return;
+        file << serializeJson(records);
+    }
+    std::remove(m_path.c_str());
+    std::rename(tmp.c_str(), m_path.c_str());
 }
 
 int JsonRepository::generateId(const std::vector<Employee>& records) const {

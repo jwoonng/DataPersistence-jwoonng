@@ -44,10 +44,16 @@ std::vector<Employee> FileRepository::load() const {
 }
 
 void FileRepository::save(const std::vector<Employee>& records) const {
-    std::ofstream file(m_path, std::ios::trunc);
-    file << "id,name,department,salary\n";
-    for (const auto& e : records)
-        file << formatLine(e) << "\n";
+    const std::string tmp = m_path + ".tmp";
+    {
+        std::ofstream file(tmp, std::ios::trunc);
+        if (!file.is_open()) return;
+        file << "id,name,department,salary\n";
+        for (const auto& e : records)
+            file << formatLine(e) << "\n";
+    }
+    std::remove(m_path.c_str());
+    std::rename(tmp.c_str(), m_path.c_str());
 }
 
 int FileRepository::generateId(const std::vector<Employee>& records) const {

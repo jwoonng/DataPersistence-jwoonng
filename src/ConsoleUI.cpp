@@ -217,7 +217,48 @@ void ConsoleUI::doCreate() {
 void ConsoleUI::doUpdate() {
     system("cls");
     printTitle("직원 수정  (Update)");
-    Employee e = inputEmployee(true);
+
+    std::cout << "  수정할 ID  : ";
+    int id = 0;
+    if (!(std::cin >> id)) {
+        std::cin.clear();
+        std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+        waitKey();
+        return;
+    }
+    std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+
+    const auto existing = m_repo->read(id);
+    if (!existing) {
+        setColor(Color::RED);
+        std::cout << "\n  ID " << id << " 에 해당하는 직원이 없습니다.\n";
+        resetColor();
+        waitKey();
+        return;
+    }
+
+    setColor(Color::GRAY);
+    std::cout << "\n  (빈 칸으로 엔터 시 기존 값 유지)\n\n";
+    resetColor();
+
+    Employee e = *existing;
+    std::string input;
+
+    std::cout << "  이름       [현재: " << e.name << "]: ";
+    std::getline(std::cin, input);
+    if (!input.empty()) e.name = input;
+
+    std::cout << "  부서       [현재: " << e.department << "]: ";
+    std::getline(std::cin, input);
+    if (!input.empty()) e.department = input;
+
+    std::cout << "  급여 (원)  [현재: "
+              << std::fixed << std::setprecision(0) << e.salary << "]: ";
+    std::getline(std::cin, input);
+    if (!input.empty()) {
+        try { e.salary = std::stod(input); } catch (...) {}
+    }
+
     if (m_repo->update(e)) {
         setColor(Color::GREEN);
         std::cout << "\n  수정 완료.\n";
